@@ -14,12 +14,14 @@
         <AddEditTodo
           v-model="todocontent"
           placeholder="Enter Your Task ..."
-          v-if="!editToDo"
+          
+          v-if="$route.name !== 'edit-todo'"
         >
           <template v-slot:button>
             <button
-              @click="submitBtnHandeler"
-              class="btn btn-outline-secondary"
+              @click="addTodo"
+              class="btn btn-outline-success"
+              :disabled="!todocontent"
               type="button"
             >
               ADD
@@ -29,22 +31,23 @@
 
         <!-- Edit Section -->
         <div class="editToDo bg-light rounded border" v-else>
-          <h5 class="text-center mt-1">Edit Your ToDo</h5>
+          <h5 class="text-center mt-2">Edit Your ToDo</h5>
           <AddEditTodo
             v-model="updateTodo.content"
             placeholder="Edit Your Task ..."
           >
             <template v-slot:button>
               <button
-                @click="editToDo = false"
-                class="btn btn-outline-secondary"
+                @click="$router.push('/')"
+                class="btn btn-outline-danger"
                 type="button"
               >
                 Cancel
               </button>
               <button
-                @click="updateToDoButton(updateTodo.id)"
-                class="btn btn-outline-secondary"
+                @click="handleToSaveTodo"
+                :disabled="!updateTodo"
+                class="btn btn-outline-success"
                 type="button"
               >
                 Save
@@ -60,35 +63,36 @@
         <div class="todo_box p-2">
           <strong class="p-2">ToDo List</strong>
           <a @click.prevent="clearToDos" href="" style="float: right">
-            {{ todos.length > 0 ? "Clear" : "" }}
+            {{ todoStore.todos.length > 0 ? "Clear" : "" }}
           </a>
 
           <div class="todos">
             <!-- todo items -->
             <Todo
-              v-for="(todo, index) in todos"
+              v-for="(todo, index) in todoStore.todos"
               :index="index"
               :todo="todo"
               :key="todo.id"
-              @toggle-status="toggleTodoStatus"
-              @delete-todo="deleteTodoHandeler"
             >
               <template v-slot:button>
                 <div class="editButton">
-                <div
-                  @click="(editToDo = true), editTodoHandeler(todo.id, todo.content)"
-                  class="button button-sm button-primary"
-                >
-                  <i class="fa-regular fa-pen-to-square"></i>
+                  <RouterLink
+                    :to="`/editTodo/${todo.id}`"
+                    href="#"
+                    class="card-footer-item text-dark"
+                    >
+                    <div class="button button-sm button-primary">
+                      <i class="fa-regular fa-pen-to-square"></i>
+                    </div>
+                  </RouterLink>
                 </div>
-              </div>
               </template>
             </Todo>
 
             <!-- todo items -->
           </div>
           <p class="text-center p-0 m-0">
-            {{ todos.length == 0 ? "No Task Added" : "" }}
+            {{ todoStore.todos.length == 0 ? "No Task Added" : "" }}
           </p>
         </div>
         <!-- ToDo Lists -->
@@ -102,75 +106,48 @@
 import { ref } from "vue";
 import AddEditTodo from "@/components/Todos/AddEditTodo.vue";
 import Todo from "@/components/Todos/Todo.vue";
+import { useTodoStore } from "@/stores/storeTodo";
+import { useRoute, useRouter } from "vue-router";
 
-// todos
-const todos = ref([
-  // {
-  //   id: "id1",
-  //   content: "Learn to Vue Router",
-  //   status: false,
-  // },
-  // {
-  //   id: "id2",
-  //   content: "Learn to Vue Watcher",
-  //   status: false,
-  // },
-]);
+// store
+const todoStore = useTodoStore();
+
+// route and router 
+const route = useRoute();
+const router = useRouter();
 
 // input feild
 const todocontent = ref("");
 
-const toggleTodoStatus = (todoPos) => {
-  todos.value[todoPos].status = !todos.value[todoPos].status;
-};
-
 // Add ToDo
-const submitBtnHandeler = () => {
-  let currentDate = new Date().getTime();
-  let id = currentDate.toString();
-  // console.log(id);
-
-  let todo = {
-    id: id,
-    content: todocontent.value,
-    status: false,
-  };
-  todos.value.unshift(todo);
-
+const addTodo = () => {
+  todoStore.addTodo(todocontent.value);
   todocontent.value = "";
 };
 
-// Delete Button
-const deleteTodoHandeler = (deleteId) => {
-  todos.value = todos.value.filter((todo) => todo.id !== deleteId);
-};
 
-const editToDo = ref(false);
-
+// edit todo
 const updateTodo = ref({});
 
-// Edit Button
-const editTodoHandeler = (editId, editContent) => {
+router.afterEach((to, from) => {
   let todo = {
-    id: editId,
-    content: editContent,
-  };
+    id: route.params.id,
+    content: todoStore.getTodoContent(route.params.id),
+  }
+
   updateTodo.value = todo;
-};
+})
 
 // Update ToDo
 
-const updateToDoButton = (updateId) => {
-  const index = todos.value.findIndex((todo) => todo.id === updateId);
-  todos.value[index].content = updateTodo.value.content;
-  todos.value[index].status = false;
-
-  editToDo.value = false;
+const handleToSaveTodo = () => {
+  todoStore.saveTodo(route.params.id, updateTodo.value.content);
+  router.push("/");
 };
 
 // Clear ToDos
 const clearToDos = () => {
-  todos.value = !todos.value;
+  todoStore.todos = [];
 };
 </script>
 
@@ -205,11 +182,22 @@ const clearToDos = () => {
 .todoItem .desc {
   width: calc(100% - 90px);
 }
-.todoItem .editButton {
+
+.todoItem .dltButton, .todoItem .editButton{
   width: 30px;
+  visibility: hidden;
+  opacity: 0;
+  transition: all ease-in-out .5s;
+  cursor: pointer;
 }
+
 .todoItem .dltButton {
-  width: 30px;
   float: right;
+}
+
+.todoItem:hover .editButton,
+.todoItem:hover .dltButton{
+  visibility: visible;
+  opacity: 1;
 }
 </style>

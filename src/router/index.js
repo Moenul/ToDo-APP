@@ -7,6 +7,11 @@ const routes = [
       name: "Todos",
       component: viewTodo,
     },
+    {
+      path: "/editTodo/:id",
+      name: "edit-todo",
+      component: viewTodo,
+    },
   ];
 
 const router = createRouter({

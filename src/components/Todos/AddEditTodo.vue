@@ -7,6 +7,7 @@
         type="text"
         class="form-control"
         :placeholder="placeholder"
+        v-autofocus
     />
     <slot name="button"></slot>
     </div>
@@ -15,6 +16,7 @@
 <script setup>
 // imports
 import { ref } from "vue";
+import { vAutofocus } from "@/directives/vAutofocus";
 
 // props
 const props = defineProps({
