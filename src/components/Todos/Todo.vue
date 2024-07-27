@@ -17,6 +17,7 @@
       }"
     >
       {{ todo.content }}
+      <span style="float: right; font-size: 16px; margin-top: 4px;">{{ dateFormatted }}</span>
     </div>
     <slot name="button"></slot>
     
@@ -39,9 +40,10 @@
 </template>
 
 <script setup>
-import {reactive} from 'vue'
+import {reactive, computed} from 'vue'
 import { useTodoStore } from '@/stores/storeTodo';
 import ModalDeleteTodo from "@/components/Todos/ModalDeleteTodo.vue";
+import { useDateFormat } from "@vueuse/core";
 
 // store
 const todoStore = useTodoStore();
@@ -57,9 +59,15 @@ const props = defineProps({
   },
 });
 
+// vueUse Date Formated
+const dateFormatted = computed(() => {
+  let date = new Date(parseInt(props.todo.date));
+  const formated = useDateFormat(date, "DD MMM - hh:mm A");
+  return formated.value;
+});
+
 
 // Modal delete
-
 const modals = reactive({
   deleteTodo: false,
 });

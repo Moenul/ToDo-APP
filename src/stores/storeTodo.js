@@ -8,11 +8,13 @@ export const useTodoStore = defineStore('todoStore', {
                 id: "id1",
                 content: "Learn to Vue Router",
                 status: false,
+                date: "1722056184190"
             },
             {
                 id: "id2",
                 content: "Need to modified",
                 status: true,
+                date: "1722056214006"
             }
         ]
     };
@@ -26,6 +28,7 @@ export const useTodoStore = defineStore('todoStore', {
             id: id,
             content: newTodoContent,
             status: false,
+            date: Date.now(),
         };
         this.todos.unshift(todo);
     },
