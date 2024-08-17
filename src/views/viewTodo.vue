@@ -5,7 +5,7 @@
       <!-- Navigation -->
       <Navbar></Navbar>
       <!-- Navigation -->
-      <div class="todoContainer card p-3 mt-5">
+      <div class="todoContainer card p-3 mt-5 mb-5">
         <!-- Header -->
         <div class="head text-center text-info">
           <h4>List Your ToDo</h4>
@@ -106,7 +106,7 @@
 </template>
 <script setup>
 // imports
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
 import AddEditTodo from "@/components/Todos/AddEditTodo.vue";
 import Todo from "@/components/Todos/Todo.vue";
 import Navbar from "@/components/Layout/Navbar.vue";
@@ -115,6 +115,10 @@ import { useRoute, useRouter } from "vue-router";
 
 // store
 const todoStore = useTodoStore();
+
+onMounted(() => {
+  todoStore.getTodos();
+});
 
 // route and router 
 const route = useRoute();
@@ -160,6 +164,22 @@ const clearToDos = () => {
   border-radius: 20px;
   border: 1px solid #e4e4e4;
   box-shadow: 0 0 0 0.2rem rgb(214 214 214 / 17%);
+}
+.todoContainer .todo_box .todos{
+  min-height: auto;
+  max-height: 40vh;
+  padding: 3px;
+	overflow: auto;
+}
+.todos::-webkit-scrollbar {
+	width:6px;
+}
+.todos::-webkit-scrollbar-track {
+  box-shadow: inset 0 0 25px rgba(206, 206, 206, 0.70);
+}
+.todos::-webkit-scrollbar-thumb {
+  background-color: rgb(110, 198, 233);
+  border-radius: 10px;
 }
 .todoItem {
   width: 100%;
