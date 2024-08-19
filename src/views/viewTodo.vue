@@ -116,8 +116,8 @@ import { useRoute, useRouter } from "vue-router";
 // store
 const todoStore = useTodoStore();
 
-onMounted(() => {
-  todoStore.getTodos();
+onMounted(async() => {
+  await todoStore.getTodos();
 });
 
 // route and router 
@@ -155,7 +155,7 @@ const handleToSaveTodo = () => {
 
 // Clear ToDos
 const clearToDos = () => {
-  todoStore.todos = [];
+  todoStore.clearToDos();
 };
 </script>
 
@@ -186,9 +186,11 @@ const clearToDos = () => {
   padding: 5px;
   margin-top: 10px;
   background: white;
-  border-radius: 5px;
-  box-shadow: -1px 1px 5px 0px #e7e7e7;
-  display: block;
+  border-radius: 7px;
+  box-shadow: -1px 1px 5px 0px #d5d5d5;
+  display: flex;
+  position: relative;
+  overflow: hidden;
 }
 .todoItem .checkbox,
 .desc,
@@ -199,30 +201,47 @@ const clearToDos = () => {
 }
 .todoItem .checkbox {
   width: 30px;
+  align-content: center;
 }
 .todoItem .checkbox input {
   border: 2px solid #a2e2ff;
 }
 .todoItem .desc {
-  width: calc(100% - 90px);
+  width: calc(100% - 30px);
 }
-
-.todoItem .dltButton, .todoItem .editButton{
-  width: 30px;
-  visibility: hidden;
-  opacity: 0;
+.todoItem .desc p{
+  margin-bottom: 0;
+  text-wrap: nowrap;
+  overflow: hidden;
+}
+.todoItem .desc span{
+  float: left; 
+  font-size: 15px;
+}
+.todoItem .edit_delete_bar{
+  position: absolute;
+  background: beige;
+  border-right: 1px solid rgb(219, 219, 173);
+  width: 70px;
+  height: 65px;
+  margin-top: -5px;
+  right: -100px;
+  display: flex;
   transition: all ease-in-out .5s;
-  cursor: pointer;
 }
-
+.todoItem .dltButton, .todoItem .editButton{
+  width: 50%;
+  cursor: pointer;
+  align-content: center;
+  font-size: 22px;
+}
 .todoItem .dltButton {
   float: right;
 }
 
-.todoItem:hover .editButton,
-.todoItem:hover .dltButton{
-  visibility: visible;
-  opacity: 1;
+.todoItem:hover .edit_delete_bar
+{
+  right: 0;
 }
 
 

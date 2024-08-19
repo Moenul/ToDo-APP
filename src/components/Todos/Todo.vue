@@ -16,25 +16,30 @@
         'text-muted text-decoration-line-through': todo.status == true,
       }"
     >
-      {{ todo.content }}
-      <span style="float: right; font-size: 16px; margin-top: 4px;">{{ dateFormatted }}</span>
+      <p>{{ todo.content }}</p>
+      <span>{{ dateFormatted }}</span>
     </div>
-    <slot name="button"></slot>
+    <div class="edit_delete_bar">
+      <slot name="button"></slot>
     
-    <div class="dltButton">
-      <div
-        @click="modals.deleteTodo = true"
-        class="button button-sm button-danger"
-      >
-        <i class="fa-regular fa-trash-can"></i>
+      <div class="dltButton">
+        <div
+          @click="modals.deleteTodo = true"
+          class="button button-sm button-danger"
+        >
+          <i class="fa-regular fa-trash-can"></i>
+        </div>
       </div>
+      
     </div>
-    <ModalDeleteTodo
-        v-if="modals.deleteTodo"
-        v-model="modals.deleteTodo"
-        :todoId="todo.id"
-      ></ModalDeleteTodo>
+        
+    
   </div>
+        <ModalDeleteTodo
+          v-if="modals.deleteTodo"
+          v-model="modals.deleteTodo"
+          :todoId="todo.id"
+        ></ModalDeleteTodo>
 
 
 </template>

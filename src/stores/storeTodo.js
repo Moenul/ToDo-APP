@@ -9,7 +9,7 @@ export const useTodoStore = defineStore('todoStore', {
   },
   actions: {
     async getTodos() {
-      const response = await axios.get('http://127.0.0.1:8000/api/v1/tasks')
+      const response = await axios.get(`http://127.0.0.1:8000/api/v1/tasks`)
       try{
         response.data.data.forEach((data) => {
           let todo = {
@@ -25,35 +25,53 @@ export const useTodoStore = defineStore('todoStore', {
       }
     },
     addTodo(newTodoContent){
-        let currentDate = new Date().getTime();
-        let id = currentDate.toString();
-
+      axios.post(`http://127.0.0.1:8000/api/v1/tasks`, {content: newTodoContent})
+      .then(response => {
+        const data = response.data.data;
         let todo = {
-            id: id,
-            content: newTodoContent,
-            status: false,
-            date: Date.now(),
+          id: data.id,
+          content: data.content,
+          status: data.status,
+          date: data.created_at,
         };
         this.todos.unshift(todo);
+        console.log(response)
+      })
     },
-    saveTodo(id, content){
-        let index = this.todos.findIndex((todo) => todo.id === id);
-        this.todos[index].content = content;
-        this.todos[index].status = false;
-        this.todos[index].date = Date.now();
+    async saveTodo(id, content){
+      await axios.put(`http://127.0.0.1:8000/api/v1/tasks/${id}`, {content: content, is_completed: false})
+      .then(response => {
+        const data = response.data.data;
+        let index = this.todos.findIndex((todo) => todo.id === data.id);
+        this.todos[index].content = data.content;
+        this.todos[index].status = data.status;
+        this.todos[index].date = data.created_at;
+        console.log(response)
+      })
     },
-    isCompleteTodo(id){
+    async isCompleteTodo(id){
       let index = this.todos.findIndex((todo) => todo.id === id);
-      this.todos[index].status = !this.todos[index].status;
+      let status = !this.todos[index].status;
+
+      await axios.patch(`http://127.0.0.1:8000/api/v1/tasks/${id}/complete`, {is_completed: status})
+      .then(response => {
+        this.todos[index].status = !this.todos[index].status;
+        console.log(response)
+      })
     },
     deleteTodo(idToDelete){
-        this.todos = this.todos.filter((todo) => todo.id !== idToDelete);
+      axios.delete(`http://127.0.0.1:8000/api/v1/tasks/${idToDelete}`);
+      this.todos = this.todos.filter((todo) => todo.id !== idToDelete);
+    },
+    clearToDos(){
+      axios.post(`http://127.0.0.1:8000/api/v1/tasks/truncate`)
+      this.todos = [];
     }
   },
   getters: {
     getTodoContent: (state) => {
       return (id) => {
-        return state.todos.filter((todo) => todo.id === id)[0].content;
+        return state.todos.filter((todo) => todo.id == id)[0].content;
       };
     },
   },
