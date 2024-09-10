@@ -37,8 +37,8 @@ const authStore = useAuthStore();
 const { getErrors:errors } = storeToRefs(useAuthStore())
 
 const form = reactive({
-    email: 'moenul22@gmail.com',
-    password: 'password'
+    email: '',
+    password: ''
 })
 
 const loginHandler = () => {

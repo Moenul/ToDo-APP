@@ -36,7 +36,7 @@ export const useAuthStore = defineStore('authStore', {
                 this.setToken(null)
                 this.setUser(null)
                 localStorage.removeItem('token')
-                
+
                 throw e
             }
         },
@@ -72,6 +72,24 @@ export const useAuthStore = defineStore('authStore', {
                 this.setToken(null)
                 this.setUser(null)
                 localStorage.removeItem('token')
+            }
+        },
+
+        async register(credentials){
+            try {
+                await axios.post('/register', {
+                    name: credentials.name,
+                    email: credentials.email,
+                    password: credentials.password,
+                    password_confirmation: credentials.password_confirmation,
+                }).then(response => {
+                    this.attempt(response.data.access_token)
+                })
+            } catch (e) {
+                if(e.response.status === 422){
+                    this.errors = e.response.data.errors
+                }
+                throw e
             }
         }
     },
