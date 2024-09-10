@@ -9,12 +9,12 @@
         <form @submit.prevent="authStore.login(form)">
             
             <div class="form-group mb-3">
-                <input v-model="form.email" type="email" class="form-control" placeholder="Enter email" name="email" required>
-                <!-- <small class="form-text text-muted">Errr.</small> -->
+                <input v-model="form.email" type="email" class="form-control" placeholder="Enter email" name="email">
+                <small v-if="errors.email" class="form-text text-danger">{{ errors.email[0] }}</small>
             </div>
             <div class="form-group mb-3">
-                <input v-model="form.password" type="password" class="form-control" placeholder="Password" name="password" required>
-                <!-- <small class="form-text text-muted">Errr.</small> -->
+                <input v-model="form.password" type="password" class="form-control" placeholder="Password" name="password">
+                <small v-if="errors.password" class="form-text text-danger">{{ errors.password[0] }}</small>
             </div>
             <button type="submit" class="btn btn-block btn-primary col-12">Login</button>
         </form>
@@ -29,12 +29,15 @@
 import { RouterLink } from 'vue-router';
 import { reactive } from 'vue';
 import { useAuthStore } from '@/stores/storeAuth';
+import { storeToRefs } from 'pinia';
 
 const authStore = useAuthStore();
 
+const { getErrors:errors } = storeToRefs(useAuthStore())
+
 const form = reactive({
-    email: 'moenul22@gmail.com',
-    password: 'password'
+    email: '',
+    password: ''
 })
 
 </script>

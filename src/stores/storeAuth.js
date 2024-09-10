@@ -5,7 +5,8 @@ export const useAuthStore = defineStore('authStore', {
     state: () => {
         return {
             token: null,
-            user: null
+            user: null,
+            errors:""
         }
     },
     actions: {
@@ -39,7 +40,11 @@ export const useAuthStore = defineStore('authStore', {
                     this.attempt(response.data)
                 })
             } catch (e){
-                throw e
+                if(e.response.status === 422){
+                    this.errors = e.response.data.errors
+                }else if(e.response.status === 401){
+                    this.errors = {"password": [e.response.data.message]}
+                }
             }
         }
     },
@@ -52,6 +57,9 @@ export const useAuthStore = defineStore('authStore', {
         },
         getUser(){
             return this.user
+        },
+        getErrors(){
+            return this.errors
         }
     }
 })
