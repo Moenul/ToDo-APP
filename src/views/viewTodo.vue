@@ -24,7 +24,7 @@
             <button
               @click="addTodo"
               class="btn btn-outline-success"
-              :disabled="!todocontent"
+              :disabled="!todocontent || !authenticated"
               type="button"
             >
               ADD
@@ -63,7 +63,7 @@
         <!-- Add Edit Section -->
 
         <!-- ToDo Lists -->
-        <div class="todo_box p-2">
+        <div class="todo_box p-2" v-if="authenticated">
           <strong class="p-2">ToDo List</strong>
           <a @click.prevent="clearToDos" href="" style="float: right">
             {{ todoStore.todos.length > 0 ? "Clear" : "" }}
@@ -112,9 +112,13 @@ import Todo from "@/components/Todos/Todo.vue";
 import Navbar from "@/components/Layout/Navbar.vue";
 import { useTodoStore } from "@/stores/storeTodo";
 import { useRoute, useRouter } from "vue-router";
+import { useAuthStore } from "@/stores/storeAuth";
+import { storeToRefs } from "pinia";
+
 
 // store
 const todoStore = useTodoStore();
+const { authenticated } = storeToRefs(useAuthStore);
 
 onMounted(async() => {
   await todoStore.getTodos();
