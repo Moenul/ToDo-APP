@@ -17,16 +17,26 @@ export const useAuthStore = defineStore('authStore', {
             this.user = user;
         },
         async attempt(token){
-            try {
-                let response = await axios.get('/user', {
-                    headers: {
-                        "Authorization" : `${token.token_type} ${token.access_token}`
-                    }
-                })
+            if (token) {
+                this.setToken(token);
+            }
 
-                this.setToken(token.access_token)
+            if (!this.token) {
+                return;
+            }
+
+            try {
+                let response = await axios.get('/user')
+
                 this.setUser(response.data.user)
+
+                return response
             } catch (e) {
+
+                this.setToken(null)
+                this.setUser(null)
+                localStorage.removeItem('token')
+                
                 throw e
             }
         },
@@ -37,7 +47,8 @@ export const useAuthStore = defineStore('authStore', {
                     email: credentials.email,
                     password: credentials.password
                 }).then(response => {
-                    this.attempt(response.data)
+                    this.attempt(response.data.access_token)
+                    console.log(response.data.access_token)
                 })
             } catch (e){
                 if(e.response.status === 422){
@@ -45,6 +56,22 @@ export const useAuthStore = defineStore('authStore', {
                 }else if(e.response.status === 401){
                     this.errors = {"password": [e.response.data.message]}
                 }
+                throw e
+            }
+        },
+
+        async logout(){
+            try {
+                let response = await axios.post('/logout')
+
+                this.setToken(null)
+                this.setUser(null)
+                localStorage.removeItem('token')
+                return response
+            } catch (e) {
+                this.setToken(null)
+                this.setUser(null)
+                localStorage.removeItem('token')
             }
         }
     },

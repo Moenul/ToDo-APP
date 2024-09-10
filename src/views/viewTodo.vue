@@ -118,7 +118,7 @@ import { storeToRefs } from "pinia";
 
 // store
 const todoStore = useTodoStore();
-const { authenticated } = storeToRefs(useAuthStore);
+const { authenticated } = storeToRefs(useAuthStore());
 
 onMounted(async() => {
   await todoStore.getTodos();

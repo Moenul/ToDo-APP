@@ -6,7 +6,7 @@
     </div>
     <!-- Header -->
     <div>
-        <form @submit.prevent="authStore.login(form)">
+        <form @submit.prevent="loginHandler">
             
             <div class="form-group mb-3">
                 <input v-model="form.email" type="email" class="form-control" placeholder="Enter email" name="email">
@@ -30,14 +30,22 @@ import { RouterLink } from 'vue-router';
 import { reactive } from 'vue';
 import { useAuthStore } from '@/stores/storeAuth';
 import { storeToRefs } from 'pinia';
+import router from '@/router';
 
 const authStore = useAuthStore();
 
 const { getErrors:errors } = storeToRefs(useAuthStore())
 
 const form = reactive({
-    email: '',
-    password: ''
+    email: 'moenul22@gmail.com',
+    password: 'password'
 })
+
+const loginHandler = () => {
+    authStore.login(form)
+    .then(() => {
+        router.push({ name:'Todos' })
+    })
+}
 
 </script>

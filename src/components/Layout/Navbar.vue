@@ -7,12 +7,12 @@
                 <img class="rounded-circle border border-info shadow-sm" style="width: 54px; overflow: hidden;" src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRlCLUUa5t9Q5fC3sR8353U21-qY5qUt0i_pA&s" alt="">
               </div>
               <div class="profile_desc">
-                <p class="m-0">User Full Name</p>
-                <span class="text-muted" style="font-size: 16px;">moenul22@gmail.com</span>
+                <p class="m-0 text-capitalize">{{ user.name }}</p>
+                <span class="text-muted" style="font-size: 16px;">{{ user.email }}</span>
               </div>
             </div>
           </div>
-          <div class="button text-danger m-0">
+          <div @click="logoutHandler" class="button text-danger m-0">
             <iconify-icon icon="lets-icons:on-button-duotone"></iconify-icon>
           </div>
 
@@ -33,7 +33,9 @@
       <div class="nav d-block card p-3 mt-5">
         <span class="title">SignIn to add task</span>
         <div class="button text-info">
+          <RouterLink to="/login">
             <iconify-icon icon="lets-icons:on-button-duotone"></iconify-icon>
+          </RouterLink>
         </div>
       </div>
       <!-- if not sign in -->
@@ -43,10 +45,19 @@
 
 <script setup>
 import { vDateTime } from "@/directives/vDateTime";
+import router from "@/router";
 import { useAuthStore } from "@/stores/storeAuth";
 import { storeToRefs } from "pinia";
+import { RouterLink } from "vue-router";
 
-const { authenticated } = storeToRefs(useAuthStore);
+const { authenticated, getUser:user } = storeToRefs(useAuthStore());
+const { logout } = useAuthStore();
+
+const logoutHandler = () => {
+  logout().then(() => {
+    router.push('/')
+  }).catch()
+}
 
 </script>
 
