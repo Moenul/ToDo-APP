@@ -28,7 +28,8 @@
         </form>
 
         <div class="text-center mt-3">
-            Already have an account? <RouterLink to="/login">Login</RouterLink>
+            Already have an account? <RouterLink to="/login">Login</RouterLink><br>
+            <RouterLink to="/resetPassword/email">Forgot password?</RouterLink>
         </div>
     </div>
 </template>

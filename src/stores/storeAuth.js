@@ -1,5 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import router from '@/router';
+
 
 export const useAuthStore = defineStore('authStore', {
     state: () => {
@@ -90,6 +92,50 @@ export const useAuthStore = defineStore('authStore', {
                     this.errors = e.response.data.errors
                 }
                 throw e
+            }
+        },
+
+        async resetPassEmail(credentials){
+            try {
+                await axios.post('/password/email',{
+                    email: credentials.email
+                })
+                .then(response => {
+                    console.log(response);
+                    
+                    if(response.status === 200){
+                        this.errors = response.data
+                        console.log(response.data);
+                    }
+                })
+            } catch (e) {
+                if(e.response.status === 422){
+                    this.errors = e.response.data.errors
+                }
+                throw e
+            }
+        },
+
+        async resetPassword(signeture, credentials){
+            try {
+                await axios.post(signeture,{
+                    password: credentials.password,
+                    password_confirmation: credentials.password_confirmation
+                })
+                .then(response => {
+                    if(response.status === 200){
+                        this.errors = response.data
+                        console.log(response.data);
+
+                        router.push({ name:'login' })
+                    }
+                })
+            } catch (e) {
+                if(e.response.status === 403){
+                    this.errors = e.response.data
+                }else if(e.response.status === 422){
+                    this.errors = e.response.data.errors
+                }
             }
         }
     },

@@ -6,7 +6,8 @@
                 <Login v-if="$route.name == 'login'"></Login>
                 <Register v-if="$route.name == 'register'"></Register>
                 <EmailVerify v-if="$route.name == 'emailVerify'"></EmailVerify>
-                <ForgotPassword v-if="$route.name == 'forgotPassword'"></ForgotPassword>
+                <ResetPassEmail v-if="$route.name == 'resetPasswordEmail'"></ResetPassEmail>
+                <ResetPassword v-if="$route.name == 'resetPassword'"></ResetPassword>
             </div>
         </div>
         <div class="col-md-3"></div>
@@ -17,7 +18,9 @@
 import Login from '@/components/auth/Login.vue';
 import Register from '@/components/auth/Register.vue';
 import EmailVerify from '@/components/auth/EmailVerify.vue';
-import ForgotPassword from '@/components/auth/ForgotPassword.vue';
+import ResetPassEmail from '@/components/auth/ResetPassEmail.vue';
+import ResetPassword from '@/components/auth/ResetPassword.vue';
+
 </script>
 
 <style scoped>

@@ -29,10 +29,16 @@ const routes = [
       component: viewAuth,
     },
     {
-      path: "/forgotPassword",
-      name: "forgotPassword",
+      path: "/resetPassword/email",
+      name: "resetPasswordEmail",
       component: viewAuth,
     },
+    {
+      path: "/api/password/reset",
+      name: "resetPassword",
+      component: viewAuth,
+    },
+
   ];
 
 const router = createRouter({

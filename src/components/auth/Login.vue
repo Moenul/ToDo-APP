@@ -6,6 +6,10 @@
     </div>
     <!-- Header -->
     <div>
+        <div v-if="errors.message" class="alert alert-info" role="alert">
+            {{ errors.message }}
+        </div>
+        
         <form @submit.prevent="loginHandler">
             
             <div class="form-group mb-3">
@@ -20,7 +24,8 @@
         </form>
 
         <div class="text-center mt-3">
-            Don't have an account? <RouterLink to="/register">Register</RouterLink>
+            Don't have an account? <RouterLink to="/register">Register</RouterLink><br>
+            <RouterLink to="/resetPassword/email">Forgot password?</RouterLink>
         </div>
     </div>
 </template>
