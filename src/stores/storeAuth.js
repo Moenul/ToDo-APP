@@ -125,10 +125,47 @@ export const useAuthStore = defineStore('authStore', {
                 .then(response => {
                     if(response.status === 200){
                         this.errors = response.data
-                        console.log(response.data);
 
                         router.push({ name:'login' })
                     }
+                })
+            } catch (e) {
+                if(e.response.status === 403){
+                    this.errors = e.response.data
+                }else if(e.response.status === 422){
+                    this.errors = e.response.data.errors
+                }
+            }
+        },
+
+        async emailVerifiyMail(){
+            try {
+                await axios.post('/email/verify/send',{
+                    email: this.user.email
+                })
+                .then(response => {
+                    if(response.status === 200){
+                        this.errors = response.data
+                    }
+                })
+            } catch (e) {
+                if(e.response.status === 403){
+                    this.errors = e.response.data
+                }else if(e.response.status === 422){
+                    this.errors = e.response.data.errors
+                }
+            }
+        },
+
+        async verifyEmail(signeture){
+            try {
+                await axios.post(signeture)
+                .then(response => {
+                    if(response.status === 200){
+                        this.errors = response.data
+                    }
+                    router.push({name: 'Todos'})
+                    this.user.email_verified_at = Date.now()
                 })
             } catch (e) {
                 if(e.response.status === 403){

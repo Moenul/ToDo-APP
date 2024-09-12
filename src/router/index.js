@@ -24,11 +24,6 @@ const routes = [
       component: viewAuth,
     },
     {
-      path: "/emailVerify",
-      name: "emailVerify",
-      component: viewAuth,
-    },
-    {
       path: "/resetPassword/email",
       name: "resetPasswordEmail",
       component: viewAuth,
@@ -36,6 +31,16 @@ const routes = [
     {
       path: "/api/password/reset",
       name: "resetPassword",
+      component: viewAuth,
+    },
+    {
+      path: "/emailVerifyMail",
+      name: "emailVerifyMail",
+      component: viewAuth,
+    },
+    {
+      path: "/api/email/verify",
+      name: "emailVerify",
       component: viewAuth,
     },
 

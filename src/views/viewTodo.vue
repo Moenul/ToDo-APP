@@ -2,6 +2,9 @@
   <div class="row">
     <div class="col-md-3"></div>
     <div class="col-md-6">
+
+      <FlassMessage v-if="errors.message" v-model="errors.message"></FlassMessage>
+
       <!-- Navigation -->
       <Navbar></Navbar>
       <!-- Navigation -->
@@ -114,11 +117,11 @@ import { useTodoStore } from "@/stores/storeTodo";
 import { useRoute, useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/storeAuth";
 import { storeToRefs } from "pinia";
-
+import FlassMessage from "@/components/Layout/FlassMessage.vue";
 
 // store
 const todoStore = useTodoStore();
-const { authenticated } = storeToRefs(useAuthStore());
+const { authenticated, getErrors:errors } = storeToRefs(useAuthStore());
 
 onMounted(async() => {
   await todoStore.getTodos();
@@ -247,6 +250,4 @@ const clearToDos = () => {
 {
   right: 0;
 }
-
-
 </style>
