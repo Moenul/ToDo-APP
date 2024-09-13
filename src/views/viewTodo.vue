@@ -27,7 +27,7 @@
             <button
               @click="addTodo"
               class="btn btn-outline-success"
-              :disabled="!todocontent || !authenticated"
+              :disabled="!todocontent || !auth"
               type="button"
             >
               ADD
@@ -66,7 +66,7 @@
         <!-- Add Edit Section -->
 
         <!-- ToDo Lists -->
-        <div class="todo_box p-2" v-if="authenticated">
+        <div class="todo_box p-2" v-if="auth">
           <strong class="p-2">ToDo List</strong>
           <a @click.prevent="clearToDos" href="" style="float: right">
             {{ todoStore.todos.length > 0 ? "Clear" : "" }}
@@ -121,7 +121,7 @@ import FlassMessage from "@/components/Layout/FlassMessage.vue";
 
 // store
 const todoStore = useTodoStore();
-const { authenticated, getErrors:errors } = storeToRefs(useAuthStore());
+const { authenticated:auth, getErrors:errors, getUser:user } = storeToRefs(useAuthStore());
 
 onMounted(async() => {
   await todoStore.getTodos();
@@ -136,7 +136,11 @@ const todocontent = ref("");
 
 // Add ToDo
 const addTodo = () => {
-  todoStore.addTodo(todocontent.value);
+  let credentials = {
+    user_id: user.value.id,
+    content: todocontent.value
+  }
+  todoStore.addTodo(credentials);
   todocontent.value = "";
 };
 

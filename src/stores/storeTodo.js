@@ -24,12 +24,16 @@ export const useTodoStore = defineStore('todoStore', {
         console.log(err)
       }
     },
-    addTodo(newTodoContent){
-      axios.post(`http://127.0.0.1:8000/api/v1/tasks`, {content: newTodoContent})
+    addTodo(credentials){
+      axios.post(`http://127.0.0.1:8000/api/v1/tasks`, {
+        user_id: credentials.user_id,
+        content: credentials.content
+      })
       .then(response => {
         const data = response.data.data;
         let todo = {
           id: data.id,
+          user_id: data.user_id,
           content: data.content,
           status: data.status,
           date: data.created_at,

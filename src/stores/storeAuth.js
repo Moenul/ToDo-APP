@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import axios from "axios";
 import router from '@/router';
+import { useTodoStore } from "./storeTodo";
 
 
 export const useAuthStore = defineStore('authStore', {
@@ -12,6 +13,10 @@ export const useAuthStore = defineStore('authStore', {
         }
     },
     actions: {
+        clearTodoStore(){
+            const todoStore = useTodoStore();
+            todoStore.todos = []
+        },
         setToken(token){
             this.token = token;
         },
@@ -69,6 +74,8 @@ export const useAuthStore = defineStore('authStore', {
                 this.setToken(null)
                 this.setUser(null)
                 localStorage.removeItem('token')
+
+                this.clearTodoStore()
                 return response
             } catch (e) {
                 this.setToken(null)
