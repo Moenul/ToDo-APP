@@ -72,6 +72,13 @@
             {{ todoStore.todos.length > 0 ? "Clear" : "" }}
           </a>
 
+          <div class="action_section mb-1">
+            <span v-show="todoStore.todos.length > 0" class="ms-2">
+              <input @change="selectAllTodos" v-model="selectAll" class="form-check-input" style="margin-top: 6px;" type="checkbox"> Select all
+            </span>
+            <button v-show="selectedTodos.length > 0" @click="bulkDelete" class="btn btn-sm btn-danger ms-4">Delete Selected</button>
+          </div> 
+
           <div class="todos">
             <!-- todo items -->
             <Todo
@@ -79,6 +86,8 @@
               :index="index"
               :todo="todo"
               :key="todo.id"
+              @toggle-selection="toggleSelection"
+              :select-all="selectAll"
             >
               <template v-slot:button>
                 <div class="editButton">
@@ -168,6 +177,39 @@ const handleToSaveTodo = () => {
 const clearToDos = () => {
   todoStore.clearToDos();
 };
+
+const selectedTodos = ref([])
+
+const toggleSelection = (todo) =>{
+
+  const index = selectedTodos.value.indexOf(todo.id)
+
+  if(index === -1){
+    selectedTodos.value.push(todo.id)
+  }else{
+    selectedTodos.value.splice(index, 1)
+  }
+ 
+  console.log(selectedTodos.value)
+}
+
+
+const bulkDelete = () => {
+  todoStore.bulkDelete(selectedTodos.value)
+}
+
+
+const selectAll = ref(false)
+
+const selectAllTodos = () => {
+  if(selectAll.value){
+    selectedTodos.value = todoStore.todos.map(todo => todo.id)
+  }else{
+    selectedTodos.value = []
+  }
+  console.log(selectedTodos.value)
+}
+
 </script>
 
 <style scope>
@@ -192,66 +234,13 @@ const clearToDos = () => {
   background-color: rgb(110, 198, 233);
   border-radius: 10px;
 }
-.todoItem {
-  width: 100%;
-  padding: 5px;
-  margin-top: 10px;
-  background: white;
-  border-radius: 7px;
-  box-shadow: -1px 1px 5px 0px #d5d5d5;
-  display: flex;
-  position: relative;
-  overflow: hidden;
-}
-.todoItem .checkbox,
-.desc,
-.editButton,
-.dltButton {
-  display: inline-block;
-  padding: 2px 8px;
-}
-.todoItem .checkbox {
-  width: 30px;
-  align-content: center;
-}
-.todoItem .checkbox input {
-  border: 2px solid #a2e2ff;
-}
-.todoItem .desc {
-  width: calc(100% - 30px);
-}
-.todoItem .desc p{
-  margin-bottom: 0;
-  text-wrap: nowrap;
-  overflow: hidden;
-}
-.todoItem .desc span{
-  float: left; 
-  font-size: 15px;
-}
-.todoItem .edit_delete_bar{
-  position: absolute;
-  background: beige;
-  border-right: 1px solid rgb(219, 219, 173);
-  width: 70px;
-  height: 65px;
-  margin-top: -5px;
-  right: -100px;
-  display: flex;
-  transition: all ease-in-out .5s;
-}
+
 .todoItem .dltButton, .todoItem .editButton{
   width: 50%;
   cursor: pointer;
   align-content: center;
   font-size: 22px;
-}
-.todoItem .dltButton {
-  float: right;
+  padding: 2px 8px;
 }
 
-.todoItem:hover .edit_delete_bar
-{
-  right: 0;
-}
 </style>

@@ -70,6 +70,14 @@ export const useTodoStore = defineStore('todoStore', {
     clearToDos(){
       axios.post(`http://127.0.0.1:8000/api/v1/tasks/truncate`)
       this.todos = [];
+    },
+    bulkDelete(bulkItems){
+      bulkItems.forEach(item => {
+        axios.delete(`http://127.0.0.1:8000/api/v1/tasks/${item}`)
+        .then(response => {
+          this.todos = this.todos.filter((todo) => todo.id !== item)
+        })
+      });
     }
   },
   getters: {
