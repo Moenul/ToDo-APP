@@ -22,7 +22,7 @@
         'text-muted text-decoration-line-through': todo.status == true,
       }"
     >
-      <p>{{ todo.content }}</p>
+      <p>{{ todo.content }} - {{ index }}</p>
       <span>{{ dateFormatted }}</span>
     </div>
     <div class="edit_delete_bar">

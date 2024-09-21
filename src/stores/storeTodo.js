@@ -14,6 +14,7 @@ export const useTodoStore = defineStore('todoStore', {
         response.data.data.forEach((data) => {
           let todo = {
             id: data.id,
+            order: data.order,
             content: data.content,
             status: data.is_completed,
             date: data.created_at
@@ -78,6 +79,43 @@ export const useTodoStore = defineStore('todoStore', {
           this.todos = this.todos.filter((todo) => todo.id !== item)
         })
       });
+    },
+    async updateOrder(newOrder, oldOrder){
+
+      const todoId = this.todos[newOrder].id
+      const todoOrder = this.todos[newOrder].order - (newOrder - oldOrder)
+
+      await axios.patch(`/v1/tasks/${todoId}/updateOrder`, {order: todoOrder})
+      .then(response => {
+        this.todos[newOrder].order = todoOrder
+      })
+
+      if(newOrder > oldOrder){
+        this.todos.filter((item, index) => index < newOrder).map((todo, index) => {
+          if(oldOrder <= index){
+            const id = todo.id
+            const order = todo.order + 1
+
+            axios.patch(`/v1/tasks/${id}/updateOrder`, {order: order})
+            .then(response => {
+              this.todos[index].order = order
+            })
+          }
+        })
+      }else{
+        this.todos.filter((item, index) => index <= oldOrder).map((todo, index) => {
+          if(newOrder < index){
+            const id = todo.id
+            const order = todo.order - 1
+
+            axios.patch(`/v1/tasks/${id}/updateOrder`, {order: order})
+            .then(response => {
+              this.todos[index].order = order
+            })
+          }
+        })
+      }
+
     }
   },
   getters: {
