@@ -9,7 +9,7 @@ export const useTodoStore = defineStore('todoStore', {
   },
   actions: {
     async getTodos() {
-      const response = await axios.get(`http://127.0.0.1:8000/api/v1/tasks`)
+      const response = await axios.get(`/v1/tasks`)
       try{
         response.data.data.forEach((data) => {
           let todo = {
@@ -26,7 +26,8 @@ export const useTodoStore = defineStore('todoStore', {
       }
     },
     addTodo(credentials){
-      axios.post(`http://127.0.0.1:8000/api/v1/tasks`, {
+      axios.post(`/v1/tasks`, {
+        order: credentials.order,
         user_id: credentials.user_id,
         content: credentials.content
       })
@@ -34,6 +35,7 @@ export const useTodoStore = defineStore('todoStore', {
         const data = response.data.data;
         let todo = {
           id: data.id,
+          order: data.order,
           user_id: data.user_id,
           content: data.content,
           status: data.status,
@@ -44,7 +46,7 @@ export const useTodoStore = defineStore('todoStore', {
       })
     },
     async saveTodo(id, content){
-      await axios.put(`http://127.0.0.1:8000/api/v1/tasks/${id}`, {content: content, is_completed: false})
+      await axios.put(`/v1/tasks/${id}`, {content: content, is_completed: false})
       .then(response => {
         const data = response.data.data;
         let index = this.todos.findIndex((todo) => todo.id === data.id);
@@ -58,64 +60,42 @@ export const useTodoStore = defineStore('todoStore', {
       let index = this.todos.findIndex((todo) => todo.id === id);
       let status = !this.todos[index].status;
 
-      await axios.patch(`http://127.0.0.1:8000/api/v1/tasks/${id}/complete`, {is_completed: status})
+      await axios.patch(`/v1/tasks/${id}/complete`, {is_completed: status})
       .then(response => {
         this.todos[index].status = !this.todos[index].status;
         console.log(response)
       })
     },
     deleteTodo(idToDelete){
-      axios.delete(`http://127.0.0.1:8000/api/v1/tasks/${idToDelete}`);
+      axios.delete(`/v1/tasks/${idToDelete}`);
       this.todos = this.todos.filter((todo) => todo.id !== idToDelete);
+      this.updateOrder()
     },
     clearToDos(){
-      axios.post(`http://127.0.0.1:8000/api/v1/tasks/truncate`)
+      axios.post(`/v1/tasks/truncate`)
       this.todos = [];
     },
     bulkDelete(bulkItems){
       bulkItems.forEach(item => {
-        axios.delete(`http://127.0.0.1:8000/api/v1/tasks/${item}`)
+        axios.delete(`/v1/tasks/${item}`)
         .then(response => {
           this.todos = this.todos.filter((todo) => todo.id !== item)
         })
       });
     },
-    async updateOrder(newOrder, oldOrder){
+    async updateOrder(){
+      let number = this.todos.length
 
-      const todoId = this.todos[newOrder].id
-      const todoOrder = this.todos[newOrder].order - (newOrder - oldOrder)
+      this.todos.map((todo, index) => {
+        if(todo.order === number){
+          number -= 1
+        }else{
+          axios.patch(`/v1/tasks/${todo.id}/updateOrder`, {order: number})
 
-      await axios.patch(`/v1/tasks/${todoId}/updateOrder`, {order: todoOrder})
-      .then(response => {
-        this.todos[newOrder].order = todoOrder
+          this.todos[index].order = number;
+          number -= 1
+        }
       })
-
-      if(newOrder > oldOrder){
-        this.todos.filter((item, index) => index < newOrder).map((todo, index) => {
-          if(oldOrder <= index){
-            const id = todo.id
-            const order = todo.order + 1
-
-            axios.patch(`/v1/tasks/${id}/updateOrder`, {order: order})
-            .then(response => {
-              this.todos[index].order = order
-            })
-          }
-        })
-      }else{
-        this.todos.filter((item, index) => index <= oldOrder).map((todo, index) => {
-          if(newOrder < index){
-            const id = todo.id
-            const order = todo.order - 1
-
-            axios.patch(`/v1/tasks/${id}/updateOrder`, {order: order})
-            .then(response => {
-              this.todos[index].order = order
-            })
-          }
-        })
-      }
-
     }
   },
   getters: {

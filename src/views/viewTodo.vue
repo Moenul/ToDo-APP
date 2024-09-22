@@ -178,6 +178,7 @@ const todocontent = ref("");
 // Add ToDo
 const addTodo = () => {
   let credentials = {
+    order: todoStore.todos.length + 1,
     user_id: user.value.id,
     content: todocontent.value,
   };
@@ -235,10 +236,7 @@ const selectAllTodos = () => {
   }};
 
 const updateOrder = (event) => {
-  const newOrder = event.newIndex;
-  const oldOrder = event.oldIndex;
-
-  todoStore.updateOrder(newOrder, oldOrder)
+  todoStore.updateOrder()
 }
 
 </script>
